@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM-to-SQL Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">LL</div>
+        <div>
+          <h1 class="text-lg font-semibold">LLM → SQL: Query Generator</h1>
+          <p class="text-sm text-gray-500">Streamlit + LangChain + Ollama demo</p>
+        </div>
+      </div>
+      <nav class="flex gap-4">
+        <a href="#overview" class="text-sm hover:text-indigo-600">Overview</a>
+        <a href="#architecture" class="text-sm hover:text-indigo-600">Architecture</a>
+        <a href="#workflow" class="text-sm hover:text-indigo-600">Workflow</a>
+        <a href="#demo" class="text-sm hover:text-indigo-600">Demo</a>
+        <a href="#examples" class="text-sm hover:text-indigo-600">Examples</a>
+        <a href="#limitations" class="text-sm hover:text-indigo-600">Limitations</a>
+        <button onclick="window.print()" class="ml-3 px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:opacity-90">Export/Print</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-white rounded-2xl shadow-md p-10 max-w-6xl mx-auto mt-8 fade-in">
+    <div class="md:flex md:items-center md:justify-between gap-8">
+      <div>
+        <h2 class="text-4xl font-extrabold mb-2">LLM-to-SQL Query Generator with Auto-Correction</h2>
+        <p class="text-gray-600 mb-4">
+          This project implements a natural language to SQL translation system using Large Language Models (LLMs), integrated with Streamlit for an interactive interface. 
+          The app allows users to input plain English questions, which are converted into SQL queries and executed against a Microsoft SQL Server database.
+        </p>
+        <p class="text-gray-600 mb-4">
+          The system enhances the reliability of generated queries by applying:
+        </p>
+        <ul class="list-disc list-inside text-gray-700 mb-4">
+          <li>Fuzzy table/column name correction</li>
+          <li>SQL syntax cleanup</li>
+          <li>Automatic GROUP BY fixes</li>
+          <li>Bracket and clause formatting adjustments</li>
+        </ul>
+        <p class="text-gray-600">This ensures queries are syntactically valid and schema-compliant, minimizing errors common in raw LLM outputs.</p>
+        <div class="flex gap-3 mt-4">
+          <a href="#demo" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Watch Demo</a>
+          <a href="#examples" class="px-4 py-2 border rounded hover:bg-gray-100">See Example</a>
+        </div>
+      </div>
+      <div class="mt-6 md:mt-0 md:w-1/3 rounded-lg overflow-hidden shadow-md">
+        <video src="llm.mp4" controls class="w-full h-auto rounded-lg"></video>
+        <p class="text-xs text-gray-500 mt-1 text-center">'llm.mp4' video file</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Grid -->
+  <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mt-10 mb-20">
+    <!-- Sidebar -->
+    <aside class="md:col-span-1">
+      <div class="sticky top-24 p-4 bg-white rounded-lg shadow">
+        <h3 class="font-semibold mb-2">Quick Links</h3>
+        <ul class="text-gray-600 space-y-2">
+          <li><a href="#overview" class="hover:text-indigo-600">Overview</a></li>
+          <li><a href="#architecture" class="hover:text-indigo-600">Architecture</a></li>
+          <li><a href="#workflow" class="hover:text-indigo-600">Workflow</a></li>
+          <li><a href="#demo" class="hover:text-indigo-600">Demo</a></li>
+          <li><a href="#examples" class="hover:text-indigo-600">Examples</a></li>
+          <li><a href="#limitations" class="hover:text-indigo-600">Limitations</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Article -->
+    <article class="md:col-span-2 space-y-8">
+
+      <!-- Overview -->
+      <section id="overview" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">1. Introduction</h3>
+        <p class="text-gray-600">
+          This project implements a natural language to SQL translation system using Large Language Models (LLMs), integrated with Streamlit for an interactive interface. 
+          The app allows users to input plain English questions, which are converted into SQL queries and executed against a Microsoft SQL Server database.
+        </p>
+        <p class="text-gray-600 mt-2">
+          The system enhances the reliability of generated queries by applying:
+        </p>
+        <ul class="list-disc list-inside text-gray-700">
+          <li>Fuzzy table/column name correction</li>
+          <li>SQL syntax cleanup</li>
+          <li>Automatic GROUP BY fixes</li>
+          <li>Bracket and clause formatting adjustments</li>
+        </ul>
+        <p class="text-gray-600 mt-2">This ensures queries are syntactically valid and schema-compliant, minimizing errors common in raw LLM outputs.</p>
+      </section>
+
+      <!-- Architecture -->
+      <section id="architecture" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">2. System Architecture</h3>
+        <p class="text-gray-600 mb-2"><strong>Components:</strong></p>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <li><strong>Database Layer:</strong> Uses SQLAlchemy to connect with a SQL Server database (CompanyDB). Database schema is dynamically retrieved with inspect(engine).</li>
+          <li><strong>Language Model Layer:</strong> OllamaLLM (LLaMA-2) via LangChain is used to generate SQL queries from natural language questions. create_sql_query_chain enables automatic SQL generation.</li>
+          <li><strong>Auto-Correction Layer:</strong> Custom functions to correct SQL:
+            <ul class="list-disc list-inside ml-5 text-gray-700">
+              <li>fix_table_names() – Wraps table names, applies fuzzy matching.</li>
+              <li>fix_column_names() – Wraps column names while avoiding SQL keywords/functions.</li>
+              <li>fix_top_clause_parsing() – Fixes misparsed TOP clauses.</li>
+              <li>fix_group_by() – Adds missing GROUP BY clauses for aggregate queries.</li>
+              <li>auto_correct_sql() – Comprehensive pipeline for cleaning malformed SQL.</li>
+              <li>clean_sql() – Combines all correction steps for final output.</li>
+            </ul>
+          </li>
+          <li><strong>User Interface Layer (Streamlit):</strong> Sidebar displays database schema; main panel allows natural language input, displays raw LLM output, corrected SQL, results, and includes a test section to validate query correction logic.</li>
+        </ul>
+      </section>
+
+      <!-- Workflow -->
+      <section id="workflow" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">3. Workflow</h3>
+        <ol class="list-decimal list-inside text-gray-700 space-y-1">
+          <li>User enters a natural language query (e.g., "Show me the 10 orders with the highest sales amounts.").</li>
+          <li>The LLM generates a raw SQL query.</li>
+          <li>SQL correction pipeline processes the query:
+            <ul class="list-disc list-inside ml-5 text-gray-700">
+              <li>Cleans formatting</li>
+              <li>Wraps identifiers with brackets</li>
+              <li>Fixes GROUP BY errors</li>
+              <li>Corrects fuzzy table/column names</li>
+            </ul>
+          </li>
+          <li>Final corrected SQL is executed against the database.</li>
+          <li>Query results are displayed as a dataframe.</li>
+        </ol>
+      </section>
+
+      <!-- Demo -->
+      <section id="demo" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">4. Demo</h3>
+        <video src="LLM.mp4" controls class="w-full h-auto rounded-lg shadow-md"></video>
+        <p class="text-sm text-gray-500 mt-1"> 'LLM.mp4' video file </p>
+      </section>
+
+      <!-- Examples -->
+      <section id="examples" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">5. Example</h3>
+        <p class="text-gray-600 mb-2">User Input: <em>"Show me the 10 orders with the highest sales amounts."</em></p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <h4 class="font-medium">Raw LLM Output</h4>
+            <pre class="mt-2 p-3 bg-gray-900 text-white rounded text-sm overflow-auto"><code>SELECT TOP 10 ORDERID, SALES
+FROM Autod
+WHERE DAYS_SINCE_LASTORDER &lt; 30
+ORDER BY SALES DESC;</code></pre>
+          </div>
+          <div>
+            <h4 class="font-medium">Corrected SQL</h4>
+            <pre class="mt-2 p-3 bg-gray-900 text-white rounded text-sm overflow-auto"><code>SELECT TOP 10 [ORDERID], [SALES]
+FROM [Autod]
+WHERE [DAYS_SINCE_LASTORDER] &lt; 30
+ORDER BY [SALES] DESC;</code></pre>
+          </div>
+        </div>
+        <p class="text-gray-600 mt-2">Result: A table of the top 10 orders by sales.</p>
+      </section>
+
+      <!-- Limitations -->
+      <section id="limitations" class="bg-white rounded-lg p-6 shadow fade-in">
+        <h3 class="text-2xl font-semibold mb-2">6. Limitations & Future Improvements</h3>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <li>Model Accuracy: The LLM may generate semantically incorrect queries even if syntactically valid.</li>
+          <li>Complex Queries: Multi-table joins and nested subqueries may require more advanced corrections.</li>
+          <li>Performance: Large schema databases may slow down fuzzy matching.</li>
+          <li>Security: Needs SQL injection protection and role-based access control before production deployment.</li>
+        </ul>
+        <p class="font-semibold mt-2">Future Work:</p>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <li>Add query explanations in plain English.</li>
+          <li>Extend support for multiple databases (PostgreSQL, MySQL, etc.).</li>
+          <li>Implement query caching for repeated requests.</li>
+          <li>Enhance with error-driven feedback loops to retrain corrections.</li>
+        </ul>
+      </section>
+
+    </article>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t py-6">
+    <div class="max-w-6xl mx-auto px-6 text-sm text-gray-500 text-center">
+      © 2025 navya navyakrishna — LLM-to-SQL Demo
+    </div>
+  </footer>
+
+  <script>
+    // Fade-in on scroll
+    const faders = document.querySelectorAll('.fade-in');
+    const appearOptions = { threshold: 0.1 };
+    const appearOnScroll = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, appearOptions);
+
+    faders.forEach(fader => appearOnScroll.observe(fader));
+  </script>
+
+</body>
+</html>
